@@ -20,4 +20,5 @@ export interface ServerToClientEvents extends CommonEvents {
 export interface ClientToServerEvents extends CommonEvents {
   createRoom: () => void;
   joinRoom: (roomId: string) => void;
+  changeName: (newName: string) => void;
 }

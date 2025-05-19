@@ -72,6 +72,19 @@ io.on('connection', (socket) => {
     socket.to(currentRoomId).emit('drawLine', data);
   });
 
+  socket.on('changeName', (newName) => {
+    if (!currentRoomId) {
+      return;
+    }
+
+    const roomIndex = rooms.findIndex((room) => room.id === currentRoomId);
+    const userIndex = rooms[roomIndex].users.findIndex((user) => user.id === userId);
+
+    rooms[roomIndex].users[userIndex].name = newName;
+
+    io.to(currentRoomId).emit('userListUpdated', rooms[roomIndex]);
+  });
+
   // Goodbye...
   socket.on('disconnect', () => {
     if (!currentRoomId) {

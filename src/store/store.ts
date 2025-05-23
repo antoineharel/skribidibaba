@@ -10,6 +10,8 @@ export type GameState = {
 
   radius: number;
   setRadius: (radius: number) => void;
+
+  wordsToChoose: string[] | null;
 };
 
 export const useGame = create<GameState>()((set) => ({
@@ -17,6 +19,7 @@ export const useGame = create<GameState>()((set) => ({
   currentColor: '#000000',
   radius: 10,
   room: null,
+  wordsToChoose: null,
 
   setCurrentColor: (currentColor: string) => set(() => ({ currentColor })),
   setRadius: (radius: number) => set(() => ({ radius })),

@@ -18,3 +18,10 @@ socket.on('userListUpdated', (room) => {
 socket.on('gameStarted', (room) => {
   useGame.setState({ room });
 });
+
+socket.on('choseWord', (wordsToChoose) => {
+  useGame.setState({ wordsToChoose });
+});
+socket.on('roundStarted', (room) => {
+  useGame.setState({ wordsToChoose: null, room });
+});

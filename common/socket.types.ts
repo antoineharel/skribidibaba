@@ -15,16 +15,19 @@ export interface ServerToClientEvents extends CommonEvents {
   roomJoined: (room: Room) => void;
   joinRoomNotFound: (roomId: string) => void;
   userListUpdated: (room: Room) => void;
-  
+
   // Game
   gameStarted: (room: Room) => void;
+  roundStarted: (room: Room) => void;
+  choseWord: (words: string[]) => void;
 }
 
 export interface ClientToServerEvents extends CommonEvents {
   createRoom: () => void;
   joinRoom: (roomId: string) => void;
   changeName: (newName: string) => void;
-  
+
   // Game
   startGame: () => void;
+  chooseWord: (word: string) => void;
 }

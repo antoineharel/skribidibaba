@@ -9,7 +9,7 @@ const rooms: Room[] = [];
 
 io.on('connection', (socket) => {
   // Send welcome message
-  const userId = generateId();
+  const userId = socket.id;
   let currentRoomId: string | null = null;
 
   socket.emit('welcome', userId);
@@ -26,9 +26,12 @@ io.on('connection', (socket) => {
           id: userId,
           isGameMaster: true,
           name: 'Game Master',
+          score: 0,
         },
       ],
       state: 'idle',
+      rounds: [],
+      currentRoundIndex: 0,
     };
     rooms.push(newRoom);
     currentRoomId = roomId;
@@ -49,6 +52,7 @@ io.on('connection', (socket) => {
       id: userId,
       isGameMaster: false,
       name: `Guest ${rooms[roomIndex].users.length}`,
+      score: 0,
     });
 
     socket.emit('roomJoined', rooms[roomIndex]);
@@ -93,7 +97,42 @@ io.on('connection', (socket) => {
     const roomIndex = rooms.findIndex((room) => room.id === currentRoomId);
 
     rooms[roomIndex].state = 'drawing';
+    rooms[roomIndex].currentRoundIndex = 0;
+    rooms[roomIndex].rounds = rooms[roomIndex].users.map((user) => ({
+      drawingUserId: user.id,
+      word: null,
+      startedAt: null,
+      duration: 60_000,
+    }));
+
+    // Send the list of words to the current drawing user
+    const words = ['apple', 'banana', 'cherry', 'grape', 'orange'];
+    const drawingUserId = rooms[roomIndex].rounds[0].drawingUserId;
+    const drawingUserSocket = Array.from(io.sockets.sockets.values()).find(
+      (s) => s.id === drawingUserId
+    );
+
+    if (drawingUserSocket) {
+      drawingUserSocket.emit('choseWord', words);
+    }
+
     io.to(currentRoomId).emit('gameStarted', rooms[roomIndex]);
+  });
+
+  socket.on('chooseWord', (word) => {
+    if (!currentRoomId) {
+      return;
+    }
+
+    const roomIndex = rooms.findIndex((room) => room.id === currentRoomId);
+    const roundIndex = rooms[roomIndex].currentRoundIndex;
+
+    rooms[roomIndex].rounds[roundIndex].word = word;
+    rooms[roomIndex].rounds[roundIndex].startedAt = Date.now();
+
+    console.log(rooms[roomIndex]);
+
+    io.to(currentRoomId).emit('roundStarted', rooms[roomIndex]);
   });
 
   // Goodbye...

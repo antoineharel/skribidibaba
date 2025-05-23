@@ -3,6 +3,8 @@ import Canvas from './canvas';
 import type { FC } from 'react';
 import { useGame } from '../../store/store';
 import IdlePage from '../idle/idle.page';
+import SelectWord from './select-word';
+import { createPortal } from 'react-dom';
 
 const GameMain: FC = () => {
   const room = useGame((state) => state.room)!;
@@ -10,6 +12,8 @@ const GameMain: FC = () => {
   if (room.state === 'drawing') {
     return (
       <main className="p-8 space-y-4">
+        {createPortal(<SelectWord />, document.body)}
+
         <Canvas />
         <ColorPalette />
       </main>

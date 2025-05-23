@@ -1,6 +1,7 @@
 import { useState, type FC } from 'react';
 import { useGame } from '../../store/store';
 import { socket } from '../../utils/socket';
+import CopyLinkButton from './copy-link.button';
 
 const IdlePage: FC = () => {
   const { room, userId } = useGame();
@@ -68,15 +69,20 @@ const IdlePage: FC = () => {
         })}
       </div>
 
-      <div className="flex justify-center mt-8">
-        <button
-          className="bg-green-600 px-4 py-2 rounded-lg text-lg"
-          onClick={() => {
-            socket.emit('startGame');
-          }}
-        >
-          Start Game
-        </button>
+      <div className="flex items-center justify-center mt-8 gap-2">
+        <CopyLinkButton />
+        {me.isGameMaster ? (
+          <button
+            className="bg-green-600 px-4 py-2 rounded-lg text-lg cursor-pointer"
+            onClick={() => {
+              socket.emit('startGame');
+            }}
+          >
+            Start Game
+          </button>
+        ) : (
+          <div>Waiting for game master to start the game...</div>
+        )}
       </div>
     </main>
   );

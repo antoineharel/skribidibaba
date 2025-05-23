@@ -1,11 +1,11 @@
-import { useState, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { socket } from '../../utils/socket';
 
 const url = new URL(window.location.href);
-url.searchParams.get('roomId');
+const defaultRoomId = url.searchParams.get('roomId');
 
 const Homepage: FC = () => {
-  const [roomId, setRoomId] = useState(() => url.searchParams.get('roomId') ?? '');
+  const [roomId, setRoomId] = useState('');
 
   const createRoom = () => {
     socket.emit('createRoom');
@@ -14,6 +14,14 @@ const Homepage: FC = () => {
   const joinRoom = () => {
     socket.emit('joinRoom', roomId);
   };
+
+  useEffect(() => {
+    if (defaultRoomId) {
+      socket.emit('joinRoom', defaultRoomId);
+      // remove the roomId from the URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   return (
     <main className="w-screen h-screen flex items-center justify-center">

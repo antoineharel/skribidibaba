@@ -1,6 +1,5 @@
 import GameMain from './components/game/game.main';
 import Homepage from './components/homepage/homepage';
-import Menu from './components/menu/menu';
 import { useGame } from './store/store';
 
 function App() {

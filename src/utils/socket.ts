@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client';
-import { useGame } from '../store/store';
+import { useStore } from '../store/store';
 import type { ClientToServerEvents, ServerToClientEvents } from '../../common/socket.types';
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
@@ -7,21 +7,21 @@ export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 );
 
 socket.on('welcome', (userId) => {
-  useGame.setState({ userId });
+  useStore.setState({ userId });
 });
 socket.on('roomJoined', (room) => {
-  useGame.setState({ room });
+  useStore.setState({ room });
 });
 socket.on('userListUpdated', (room) => {
-  useGame.setState({ room });
+  useStore.setState({ room });
 });
 socket.on('gameStarted', (room) => {
-  useGame.setState({ room });
+  useStore.setState({ room });
 });
 
 socket.on('choseWord', (wordsToChoose) => {
-  useGame.setState({ wordsToChoose });
+  useStore.setState({ wordsToChoose });
 });
 socket.on('roundStarted', (room) => {
-  useGame.setState({ wordsToChoose: null, room });
+  useStore.setState({ wordsToChoose: null, room });
 });

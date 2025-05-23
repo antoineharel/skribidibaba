@@ -7,7 +7,11 @@ import SelectWord from './select-word';
 import { createPortal } from 'react-dom';
 
 const GameMain: FC = () => {
-  const room = useGame((state) => state.room)!;
+  const { room } = useGame();
+
+  if (!room) {
+    return null;
+  }
 
   if (room.state === 'drawing') {
     return (

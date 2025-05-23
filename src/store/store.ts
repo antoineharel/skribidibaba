@@ -14,7 +14,7 @@ export type GameState = {
   wordsToChoose: string[] | null;
 };
 
-export const useGame = create<GameState>()((set) => ({
+export const useStore = create<GameState>()((set) => ({
   userId: null,
   currentColor: '#000000',
   radius: 10,
@@ -24,3 +24,16 @@ export const useGame = create<GameState>()((set) => ({
   setCurrentColor: (currentColor: string) => set(() => ({ currentColor })),
   setRadius: (radius: number) => set(() => ({ radius })),
 }));
+
+export const useGame = () => {
+  const state = useStore();
+
+  const currentRound =
+    state.room?.currentRoundIndex === null
+      ? null
+      : state.room?.rounds[state.room?.currentRoundIndex] ?? null;
+
+  const isCurrentUserDrawing = currentRound?.drawingUserId === state.userId;
+
+  return { ...state, currentRound, isCurrentUserDrawing };
+};

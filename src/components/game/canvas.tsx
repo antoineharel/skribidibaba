@@ -3,6 +3,7 @@ import { useGame } from '../../store/store';
 import { draw, drawCircle, drawLine } from '../../utils/canvas.utils';
 import { socket } from '../../utils/socket';
 import type { DrawCircleParams, DrawLineParams } from '../../../common/canvas.types';
+import { cx } from '../../utils/cx';
 
 const Canvas: FC = () => {
   const gameState = useGame();
@@ -11,7 +12,9 @@ const Canvas: FC = () => {
     <canvas
       width="520"
       height="520"
-      className="bg-white cursor-crosshair"
+      className={cx('bg-white', {
+        'cursor-crosshair': gameState.isCurrentUserDrawing,
+      })}
       ref={(canvas) => {
         const state = {
           isMouseDown: false,
@@ -59,10 +62,12 @@ const Canvas: FC = () => {
           }
         };
 
-        canvas.addEventListener('mousedown', onMouseDown);
-        canvas.addEventListener('mouseup', onMouseUp);
-        canvas.addEventListener('mouseleave', onMouseLeave);
-        canvas.addEventListener('mousemove', onMouseMove);
+        if (gameState.isCurrentUserDrawing) {
+          canvas.addEventListener('mousedown', onMouseDown);
+          canvas.addEventListener('mouseup', onMouseUp);
+          canvas.addEventListener('mouseleave', onMouseLeave);
+          canvas.addEventListener('mousemove', onMouseMove);
+        }
 
         const onDrawCircle = (data: DrawCircleParams) => drawCircle({ ...data, canvasCtx });
         const onDrawLine = (data: DrawLineParams) => drawLine({ ...data, canvasCtx });
@@ -71,10 +76,12 @@ const Canvas: FC = () => {
         socket.on('drawLine', onDrawLine);
 
         return () => {
-          canvas.removeEventListener('mousedown', onMouseDown);
-          canvas.removeEventListener('mouseup', onMouseUp);
-          canvas.removeEventListener('mouseleave', onMouseLeave);
-          canvas.removeEventListener('mousemove', onMouseMove);
+          if (gameState.isCurrentUserDrawing) {
+            canvas.removeEventListener('mousedown', onMouseDown);
+            canvas.removeEventListener('mouseup', onMouseUp);
+            canvas.removeEventListener('mouseleave', onMouseLeave);
+            canvas.removeEventListener('mousemove', onMouseMove);
+          }
 
           socket.off('drawCircle', onDrawCircle);
           socket.off('drawLine', onDrawLine);

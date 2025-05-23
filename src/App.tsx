@@ -8,7 +8,7 @@ function App() {
 
   return (
     <div>
-      <Menu />
+      {/* <Menu /> */}
       {userId && <div>{room ? <GameMain /> : <Homepage />}</div>}
     </div>
   );

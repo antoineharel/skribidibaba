@@ -36,7 +36,11 @@ const COLORS = [
 ];
 
 const ColorPalette: FC = () => {
-  const { currentColor, setCurrentColor } = useGame();
+  const { currentColor, setCurrentColor, isCurrentUserDrawing } = useGame();
+
+  if (!isCurrentUserDrawing) {
+    return null;
+  }
 
   return (
     <div>

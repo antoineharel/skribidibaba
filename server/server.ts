@@ -2,6 +2,7 @@ import { Server } from 'socket.io';
 import { generateId } from './utils/id';
 import { ClientToServerEvents, ServerToClientEvents } from '../common/socket.types';
 import { Room } from '../common/common.types';
+import { getRandomWords } from './utils/random-words';
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(3000, { cors: { origin: '*' } });
 
@@ -90,7 +91,7 @@ io.on('connection', (socket) => {
   });
 
   // Game events
-  socket.on('startGame', () => {
+  socket.on('startGame', async () => {
     if (!currentRoomId) {
       return;
     }
@@ -106,7 +107,8 @@ io.on('connection', (socket) => {
     }));
 
     // Send the list of words to the current drawing user
-    const words = ['apple', 'banana', 'cherry', 'grape', 'orange'];
+    const words = await getRandomWords();
+    console.log(words);
     const drawingUserId = rooms[roomIndex].rounds[0].drawingUserId;
     const drawingUserSocket = Array.from(io.sockets.sockets.values()).find(
       (s) => s.id === drawingUserId
@@ -126,6 +128,10 @@ io.on('connection', (socket) => {
 
     const roomIndex = rooms.findIndex((room) => room.id === currentRoomId);
     const roundIndex = rooms[roomIndex].currentRoundIndex;
+
+    if (rooms[roomIndex].rounds[roundIndex].drawingUserId !== userId) {
+      return;
+    }
 
     rooms[roomIndex].rounds[roundIndex].word = word;
     rooms[roomIndex].rounds[roundIndex].startedAt = Date.now();

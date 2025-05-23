@@ -15,3 +15,6 @@ socket.on('roomJoined', (room) => {
 socket.on('userListUpdated', (room) => {
   useGame.setState({ room });
 });
+socket.on('gameStarted', (room) => {
+  useGame.setState({ room });
+});

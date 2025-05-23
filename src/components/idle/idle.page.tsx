@@ -67,6 +67,17 @@ const IdlePage: FC = () => {
           );
         })}
       </div>
+
+      <div className="flex justify-center mt-8">
+        <button
+          className="bg-green-600 px-4 py-2 rounded-lg text-lg"
+          onClick={() => {
+            socket.emit('startGame');
+          }}
+        >
+          Start Game
+        </button>
+      </div>
     </main>
   );
 };

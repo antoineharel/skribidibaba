@@ -85,6 +85,17 @@ io.on('connection', (socket) => {
     io.to(currentRoomId).emit('userListUpdated', rooms[roomIndex]);
   });
 
+  // Game events
+  socket.on('startGame', () => {
+    if (!currentRoomId) {
+      return;
+    }
+    const roomIndex = rooms.findIndex((room) => room.id === currentRoomId);
+
+    rooms[roomIndex].state = 'drawing';
+    io.to(currentRoomId).emit('gameStarted', rooms[roomIndex]);
+  });
+
   // Goodbye...
   socket.on('disconnect', () => {
     if (!currentRoomId) {
